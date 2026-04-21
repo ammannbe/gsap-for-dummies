@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GSAP Horizontal Scroll</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        header,
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .empty {
+            height: 500px;
+            background: aliceblue;
+            color: #009b77;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .container {
+            height: 100vh;
+            overflow: hidden;
+            background: #eee;
+            display: flex;
+            align-items: center;
+
+            padding-inline: 20px;
+        }
+
+        .inner {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .panels {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: 400px;
+            gap: 20px;
+            will-change: transform;
+        }
+
+        .panel {
+            width: 400px;
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: white;
+            border-radius: 10px;
+        }
+
+        .panel1 {
+            background-color: #ff6f61;
+        }
+
+        .panel2 {
+            background-color: #6b5b95;
+        }
+
+        .panel3 {
+            background-color: #88b04b;
+        }
+
+        .panel4 {
+            background-color: #f7cac9;
+        }
+
+        .panel5 {
+            background-color: #92a8d1;
+        }
+
+        .panel6 {
+            background-color: #955251;
+        }
+
+        .panel7 {
+            background-color: #b565a7;
+        }
+
+        .panel8 {
+            background-color: #009b77;
+        }
+
+        .panel9 {
+            background-color: #dd4124;
+        }
+
+        .panel10 {
+            background-color: #45b8ac;
+        }
+
+        .panel11 {
+            background-color: #e15d44;
+        }
+
+        .panel12 {
+            background-color: #7fcdcd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>GSAP ScrollTrigger Example</h1>
+        <div class="empty">
+            This is the header content. Scroll down to see the panels in action.
+        </div>
+    </header>
+
+    <main>
+        <div class="container container1">
+            <div class="inner">
+                <div class="panels">
+                    <section class="panel panel1">Panel 1</section>
+                    <section class="panel panel2">Panel 2</section>
+                    <section class="panel panel3">Panel 3</section>
+                    <section class="panel panel4">Panel 4</section>
+                    <section class="panel panel5">Panel 5</section>
+                    <section class="panel panel6">Panel 6</section>
+                    <section class="panel panel7">Panel 7</section>
+                    <section class="panel panel8">Panel 8</section>
+                    <section class="panel panel9">Panel 9</section>
+                    <section class="panel panel10">Panel 10</section>
+                    <section class="panel panel11">Panel 11</section>
+                    <section class="panel panel12">Panel 12</section>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty">Middle content</div>
+
+        <div class="container container2">
+            <div class="inner">
+                <div class="panels">
+                    <section class="panel panel1">Panel 1</section>
+                    <section class="panel panel2">Panel 2</section>
+                    <section class="panel panel3">Panel 3</section>
+                    <section class="panel panel4">Panel 4</section>
+                    <section class="panel panel5">Panel 5</section>
+                    <section class="panel panel6">Panel 6</section>
+                    <section class="panel panel7">Panel 7</section>
+                    <section class="panel panel8">Panel 8</section>
+                    <section class="panel panel9">Panel 9</section>
+                    <section class="panel panel10">Panel 10</section>
+                    <section class="panel panel11">Panel 11</section>
+                    <section class="panel panel12">Panel 12</section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="empty">Footer Content</div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            document.querySelectorAll(".container").forEach((container) => {
+                const inner = container.querySelector(".inner");
+                const panels = container.querySelector(".panels");
+
+                function getScrollAmount() {
+                    return Math.max(0, panels.scrollWidth - inner.clientWidth);
+                }
+
+                gsap.to(panels, {
+                    x: () => -getScrollAmount(),
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: container,
+                        pin: true,
+                        scrub: 1,
+                        start: "top top",
+                        end: () => "+=" + getScrollAmount(),
+                        invalidateOnRefresh: true,
+                        markers: true
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
