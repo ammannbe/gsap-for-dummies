@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GSAP Horizontal Scroll</title>
+
+    <link rel="stylesheet" href="./style.css">
+
+    <style>
+        .container {
+            height: 100vh;
+            overflow: hidden;
+            background: #eee;
+            display: flex;
+            align-items: center;
+
+            padding-inline: 20px;
+        }
+
+        .wrapper {
+            display: flex;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .container2 .wrapper {
+            justify-content: flex-end;
+        }
+
+        .panels {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: 400px;
+            gap: 20px;
+            will-change: transform;
+        }
+
+        .panel {
+            aspect-ratio: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>GSAP ScrollTrigger Example</h1>
+        <div class="empty">
+            This is the header content. Scroll down to see the panels in action.
+        </div>
+    </header>
+
+    <main>
+        <div class="container container1" data-gsap="x-scroll">
+            <div class="wrapper" data-gsap-x-scroll="wrapper">
+                <div class="panels" data-gsap-x-scroll="content">
+                    <section class="panel panel1">Panel 1</section>
+                    <section class="panel panel2">Panel 2</section>
+                    <section class="panel panel3">Panel 3</section>
+                    <section class="panel panel4">Panel 4</section>
+                    <section class="panel panel5">Panel 5</section>
+                    <section class="panel panel6">Panel 6</section>
+                    <section class="panel panel7">Panel 7</section>
+                    <section class="panel panel8">Panel 8</section>
+                    <section class="panel panel9">Panel 9</section>
+                    <section class="panel panel10">Panel 10</section>
+                    <section class="panel panel11">Panel 11</section>
+                    <section class="panel panel12">Panel 12</section>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty">Middle content</div>
+
+        <div class="container container2" data-gsap="x-scroll">
+            <div class="wrapper" data-gsap-x-scroll="wrapper">
+                <div class="panels" data-gsap-x-scroll="content">
+                    <section class="panel panel1">Panel 1</section>
+                    <section class="panel panel2">Panel 2</section>
+                    <section class="panel panel3">Panel 3</section>
+                    <section class="panel panel4">Panel 4</section>
+                    <section class="panel panel5">Panel 5</section>
+                    <section class="panel panel6">Panel 6</section>
+                    <section class="panel panel7">Panel 7</section>
+                    <section class="panel panel8">Panel 8</section>
+                    <section class="panel panel9">Panel 9</section>
+                    <section class="panel panel10">Panel 10</section>
+                    <section class="panel panel11">Panel 11</section>
+                    <section class="panel panel12">Panel 12</section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Footer Content
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            document.querySelectorAll('[data-gsap="x-scroll"]').forEach((container, i) => {
+                const multiplier = i === 0 ? -1 : 1; // First container scrolls left to right, second right to left
+                const wrapper = container.querySelector('[data-gsap-x-scroll="wrapper"]');
+                const content = container.querySelector('[data-gsap-x-scroll="content"]');
+
+                const position = () => Math.max(0, content.scrollWidth - wrapper.clientWidth);
+
+                gsap.to(content, {
+                    x: () => position() * multiplier,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: container,
+                        pin: true,
+                        scrub: 1,
+                        start: 'top top',
+                        end: (i) => '+=' + position(),
+                        invalidateOnRefresh: true,
+                        markers: true
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
