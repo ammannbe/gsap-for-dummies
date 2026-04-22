@@ -51,7 +51,7 @@
     <main>
         <div class="container container2" data-gsap="slidein">
             <div class="inner">
-                <div class="panels" data-gsap-slidein="items">
+                <div class="panels" data-gsap-slidein="content">
                     <section class="panel panel1">Panel 1</section>
                     <section class="panel panel2">Panel 2</section>
                     <section class="panel panel3">Panel 3</section>
@@ -63,7 +63,7 @@
 
         <div class="container container1" data-gsap="slidein" data-gsap-reverse>
             <div class="inner">
-                <div class="panels" data-gsap-slidein="items">
+                <div class="panels" data-gsap-slidein="content">
                     <section class="panel panel1">Panel 1</section>
                     <section class="panel panel2">Panel 2</section>
                     <section class="panel panel3">Panel 3</section>
@@ -86,7 +86,7 @@
             gsap.registerPlugin(ScrollTrigger);
 
             document.querySelectorAll('[data-gsap="slidein"]').forEach((container) => {
-                const items = container.querySelectorAll('[data-gsap-slidein="items"] > *');
+                const items = container.querySelectorAll('[data-gsap-slidein="content"] > *');
                 const reverse = container.dataset.gsapReverse !== undefined;
 
                 const position = (i) => {
