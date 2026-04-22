@@ -90,17 +90,12 @@
                 const reverse = container.dataset.gsapReverse !== undefined;
 
                 const position = (i) => {
-                    let distance = gsap.utils.clamp(12, 50, window.innerWidth * 0.05); // 5% of the viewport width, but min. 12px and max. 50px
-
-                    if (i % 2 === 0) {
-                        return reverse
-                            ? (i + 1) * distance
-                            : (items.length - i) * distance;
-                    }
+                    let multiplier = (i % 2 === 0) ? 0.05 : 0.05 * -1;
+                    let distance = gsap.utils.clamp(12, 50, window.innerWidth * multiplier); // 5% of the viewport width, but min. 12px and max. 50px
 
                     return reverse
-                        ? (i + 1) * -distance
-                        : (items.length - i) * -distance;
+                        ? (i + 1) * distance
+                        : (items.length - i) * distance;
                 };
 
                 gsap.fromTo(items, {

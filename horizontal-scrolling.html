@@ -32,13 +32,37 @@
         .panels {
             display: grid;
             grid-auto-flow: column;
-            grid-auto-columns: 400px;
             gap: 20px;
+            align-items: end;
             will-change: transform;
         }
 
         .panel {
+            --width: 400px;
+
+            width: var(--width);
             aspect-ratio: 1;
+        }
+
+        .container1 .panel1,
+        .container2 .panel12 {
+            width: calc(var(--width) * 2 + 20px);
+        }
+
+        @media screen and (max-width: 1200px) {
+            .panel { --width: 300px; }
+        }
+
+        @media screen and (max-width: 1024px) {
+            .panel { --width: 200px; }
+        }
+
+        @media screen and (max-width: 768px) {
+            .panel { --width: 150px; }
+        }
+
+        @media screen and (max-width: 600px) {
+            .panel { --width: 100px; }
         }
     </style>
 </head>
