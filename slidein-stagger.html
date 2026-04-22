@@ -10,16 +10,7 @@
 
     <style>
         .container {
-            background: #eee;
-            display: flex;
-            align-items: center;
-
-            padding: 20px;
-        }
-
-        .inner {
-            width: 100%;
-            overflow: hidden;
+            height: auto;
         }
 
         .panels {
@@ -50,7 +41,7 @@
 
     <main>
         <div class="container container2" data-gsap="slidein">
-            <div class="inner">
+            <div class="wrapper">
                 <div class="panels" data-gsap-slidein="content">
                     <section class="panel panel1">Panel 1</section>
                     <section class="panel panel2">Panel 2</section>
@@ -62,7 +53,7 @@
         <div class="empty">Middle content</div>
 
         <div class="container container1" data-gsap="slidein" data-gsap-reverse>
-            <div class="inner">
+            <div class="wrapper">
                 <div class="panels" data-gsap-slidein="content">
                     <section class="panel panel1">Panel 1</section>
                     <section class="panel panel2">Panel 2</section>
