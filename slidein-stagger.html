@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GSAP Horizontal Scroll</title>
+
+    <link rel="stylesheet" href="./style.css">
+
+    <style>
+        .container {
+            background: #eee;
+            display: flex;
+            align-items: center;
+
+            padding: 20px;
+        }
+
+        .inner {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .panels {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            will-change: transform;
+        }
+
+        .panel {
+            width: 800px;
+            max-width: 50%;
+
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>GSAP ScrollTrigger Example</h1>
+        <div class="empty">
+            This is the header content. Scroll down to see the panels in action.
+        </div>
+    </header>
+
+    <main>
+        <div class="container container2" data-gsap="slidein">
+            <div class="inner">
+                <div class="panels" data-gsap-slidein="items">
+                    <section class="panel panel1">Panel 1</section>
+                    <section class="panel panel2">Panel 2</section>
+                    <section class="panel panel3">Panel 3</section>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty">Middle content</div>
+
+        <div class="container container1" data-gsap="slidein" data-gsap-reverse>
+            <div class="inner">
+                <div class="panels" data-gsap-slidein="items">
+                    <section class="panel panel1">Panel 1</section>
+                    <section class="panel panel2">Panel 2</section>
+                    <section class="panel panel3">Panel 3</section>
+                    <section class="panel panel4">Panel 4</section>
+                    <section class="panel panel5">Panel 5</section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Footer Content
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            document.querySelectorAll('[data-gsap="slidein"]').forEach((container) => {
+                const items = container.querySelectorAll('[data-gsap-slidein="items"] > *');
+                const reverse = container.dataset.gsapReverse !== undefined;
+
+                const position = (i) => {
+                    let distance = gsap.utils.clamp(12, 50, window.innerWidth * 0.05); // 5% of the viewport width, but min. 12px and max. 50px
+
+                    if (i % 2 === 0) {
+                        return reverse
+                            ? (i + 1) * distance
+                            : (items.length - i) * distance;
+                    }
+
+                    return reverse
+                        ? (i + 1) * -distance
+                        : (items.length - i) * -distance;
+                };
+
+                gsap.fromTo(items, {
+                    x: (i) => position(i, 50),
+                    opacity: 0,
+                }, {
+                    x: (i) => position(i, 50) * -1,
+                    opacity: 1,
+                    duration: 2,
+                    stagger: 0.15,
+                    ease: "back.inOut",
+                    scrollTrigger: container,
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
