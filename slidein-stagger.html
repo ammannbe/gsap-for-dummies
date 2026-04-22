@@ -92,9 +92,11 @@
                 gsap.fromTo(items, {
                     x: (i) => position(i, 50),
                     opacity: 0,
+                    filter: 'blur(5px)',
                 }, {
                     x: (i) => position(i, 50) * -1,
                     opacity: 1,
+                    filter: 'blur(0px)',
                     duration: 2,
                     stagger: 0.15,
                     ease: "back.inOut",
