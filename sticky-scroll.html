@@ -126,6 +126,20 @@
 
         <div class="empty">Middle content</div>
 
+        <div class="container container2" data-gsap="sticky-scroll">
+            <div class="wrapper" data-gsap-sticky-scroll="wrapper">
+                <div class="panelsWrapper">
+                    <div class="panels" data-gsap-sticky-scroll="content">
+                        <section class="panel panel1">Panel 1</section>
+                        <section class="panel panel2">Panel 2</section>
+                        <section class="panel panel3">Panel 3</section>
+                        <section class="panel panel4">Panel 4</section>
+                        <section class="panel panel5">Panel 5</section>
+                        <section class="panel panel6">Panel 6</section>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <footer>
@@ -177,10 +191,12 @@
                         duration: 0.6
                     }, index);
 
-                    tl.to(images, {
-                        opacity: (i) => i === index ? 1 : 0,
-                        duration: 0.4
-                    }, index);
+                    if (images.length && images[index]) {
+                        tl.to(images[index], {
+                            opacity: 1,
+                            duration: 0.4
+                        }, index);
+                    }
                 });
             });
         });
