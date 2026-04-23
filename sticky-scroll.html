@@ -62,7 +62,7 @@
             flex-direction: column;
             gap: 20px;
             will-change: transform;
-
+            transition: transform 200ms ease-in-out;
         }
 
         .panel {
@@ -74,6 +74,7 @@
             font-size: 2rem;
 
             opacity: 0.3;
+            transition: opacity 200ms ease-in-out;
         }
 
         .panel1 {
@@ -112,7 +113,7 @@
                         scrub: 1,
                         pin: true,
                         invalidateOnRefresh: true,
-                        markers: true
+                        markers: true,
                     }
                 });
 
@@ -126,18 +127,18 @@
 
                     tl.to(content, {
                         y: moveY * -1,
-                        duration: 0.2,
+                        duration: 0,
                         ease: 'none',
                     }, index);
 
                     tl.to(item, {
                         opacity: 1,
-                        duration: 0.6
+                        duration: 0
                     }, index);
 
                     if (images.length && images[index]) {
                         tl.to(images[index], {
-                            opacity: 1,
+                            opacity: index === 2 ? 0.5 : 1,
                             duration: 0.4
                         }, index);
                     }
