@@ -80,11 +80,16 @@
 
         <div class="empty">
             This is the header content. Scroll down to see the panels in action.
+
+            <br><br>
+
+            <a href="#one">One</a><br>
+            <a href="#two">Two</a><br>
         </div>
     </header>
 
     <main>
-        <div class="container container2" data-gsap="slidein">
+        <div id="one" class="container container1" data-gsap="slidein">
             <div class="wrapper">
                 <div class="panels" data-gsap-slidein="content">
                     <section class="panel panel1">Panel 1</section>
@@ -96,7 +101,7 @@
 
         <div class="empty">Middle content</div>
 
-        <div class="container container1" data-gsap="slidein" data-gsap-reverse>
+        <div id="two" class="container container2" data-gsap="slidein" data-gsap-reverse>
             <div class="wrapper">
                 <div class="panels" data-gsap-slidein="content">
                     <section class="panel panel1">Panel 1</section>
