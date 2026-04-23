@@ -27,6 +27,15 @@ footer {
     padding-block: 50px;
 }
 
+nav {
+    padding-block: 10px;
+}
+
+nav > * {
+    color: white;
+    font-size: 2rem;
+}
+
 .empty {
     height: 500px;
     background: aliceblue;
@@ -108,4 +117,35 @@ footer {
 
 .panel12 {
     background-color: #7fcdcd;
+}
+
+
+
+[data-barba-transition] {
+    height: 250vw;
+    width: 250vw;
+    border-radius: 50%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    pointer-events: none !important;
+    background-color: #88b04b;
+    transform: translate(-50%, -50%) scale(0);
+    transform-origin: center;
+    will-change: transform;
+}
+
+@media only screen and (max-width: 768px) {
+    [data-barba-transition] {
+        height: 300vw;
+        width: 300vw;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    [data-barba-transition] {
+        height: 400vw;
+        width: 400vw;
+    }
 }
