@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GSAP Sticky Scroll 3D</title>
+
+    <link rel="stylesheet" href="./style.css">
+
+    <style>
+        .wrapper {
+            display: flex;
+            gap: 20px;
+            height: 100%;
+            position: relative;
+        }
+
+        .wrapper > * {
+            width: 100%;
+        }
+
+        @media screen and (max-width: 1024px) and (orientation: portrait) {
+            .wrapper {
+                flex-direction: column;
+            }
+        }
+
+        .canvas {
+            position: relative;
+            height: 100%;
+        }
+
+        @media screen and (max-width: 1024px) and (orientation: portrait) {
+            .canvas {
+                height: auto;
+                aspect-ratio: 16/9;
+            }
+        }
+
+        .image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: #ccc;
+            border-radius: 10px;
+        }
+
+        .image:not(:first-child) {
+            opacity: 0;
+        }
+
+        .panelsWrapper {
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        .panels {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            will-change: transform;
+            transition: transform 200ms ease-in-out;
+        }
+
+        .panel {
+            width: 100%;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            padding: 20px;;
+
+            opacity: 0.3;
+            transition: opacity 200ms ease-in-out;
+        }
+
+        .panelText {
+            text-align: center;
+        }
+
+        .panel1 {
+            height: 200px;
+        }
+
+        .panel3 {
+            height: 600px;
+        }
+
+        .panel6 {
+            height: 100px;
+        }
+
+        .container2 .panel6 {
+            height: 150px;
+        }
+
+        .container3 .wrapper {
+            min-height: 500px;
+            max-height: 640px;
+
+            min-width: 500px;
+            max-width: 2000px;
+
+            margin-inline: auto;
+        }
+
+        .container3 .panel {
+            height: auto;
+        }
+
+        .container .panel .panelText {
+            font-size: 1.3rem;
+            transition: height 200ms ease-in-out,
+                        opacity 200ms ease-in-out;
+            overflow: hidden;
+        }
+    </style>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
+
+    <script>
+        function initCanvas3d(container, content, canvas, url, framecount, framelength) {
+            const context = canvas.getContext('2d');
+
+            function render(context, canvas, image) {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(image, 0, 0);
+            }
+
+            function initload(img) {
+                // Set canvas context size based on the specified image
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                gsap.to(frames, {
+                    frame: framecount - 1,
+                    snap: 'frame',
+                    scrollTrigger: {
+                        trigger: container,
+                        start: 'top top',
+                        end: '+=' + content.offsetHeight,
+                        scrub: 1,
+                        invalidateOnRefresh: true,
+                        markers: true,
+                    },
+                    onUpdate: () => render(context, canvas, images[frames.frame]),
+                });
+            }
+
+
+            const images = []
+            const frames = { frame: 0 };
+
+            for (let i = 0; i < framecount; i++) {
+                const img = new Image();
+
+                if (i === (framecount - 1)) {
+                    img.onload = () => initload(img);
+                }
+
+                img.src = url.replace('{frame}', (i + 1).toString().padStart(framelength, '0'));
+                images.push(img);
+            }
+        }
+
+        function initStickyScroll(container, content, items, images, hiddenItemSelector) {
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: container,
+                    start: 'top top',
+                    end: '+=' + content.offsetHeight,
+                    scrub: 1,
+                    pin: true,
+                    invalidateOnRefresh: true,
+                    markers: true,
+                }
+            });
+
+            let moveY = 0;
+            items.forEach((item, index) => {
+                const gap = parseFloat(getComputedStyle(content).gap) || 0;
+
+                moveY += items[index - 1]
+                    ? items[index - 1].offsetHeight + gap
+                    : 0;
+
+                tl.to(content, {
+                    y: moveY * -1,
+                    duration: 0,
+                    ease: 'none',
+                }, index);
+
+                tl.to(item, {
+                    opacity: 1,
+                    duration: 0,
+                }, index);
+
+                // It's important that we always set tl.to(...), even if image[index] is null
+                // -> otherwise the calculations won't be correct
+                tl.to(images[index] ?? null, {
+                    opacity: 1,
+                    duration: 0.4,
+                }, index);
+
+                const hiddenItem = item.querySelector(hiddenItemSelector);
+                const hiddenItemHeight = hiddenItem?.offsetHeight || 0;
+
+                gsap.set(hiddenItem, { height: 0 });
+
+                // It's important that we always set tl.to(...), even if hiddenItem is null
+                // -> otherwise the calculations won't be correct
+                tl.to(hiddenItem, {
+                    opacity: 1,
+                    height: hiddenItemHeight,
+                    duration: 0,
+                }, index);
+
+                const prevItem = items[index - 1] || null
+                const hiddenPrevItem = prevItem?.querySelector(hiddenItemSelector);
+                tl.to(hiddenPrevItem, {
+                    opacity: 0,
+                    height: 0,
+                    duration: 0,
+                }, index);
+            });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            document.querySelectorAll('[data-gsap="sticky-scroll"]').forEach((container) => {
+                const content = container.querySelector('[data-gsap-sticky-scroll="content"]');
+
+
+                const canvas = container.querySelector('[data-gsap-canvas3d="canvas"]');
+                const url = canvas.dataset.gsapCanvas3dUrl;
+                const framecount = canvas.dataset.gsapCanvas3dFramecount;
+                const framelength = canvas.dataset.gsapCanvas3dFramelength;
+
+                initCanvas3d(container, content, canvas, url, framecount, framelength);
+
+
+
+                const items = content.querySelectorAll('[data-gsap-sticky-scroll="content"] > *');
+                const images = container.querySelectorAll('[data-gsap-sticky-scroll="images"] > *');
+                const hiddenItemSelector = '[data-gsap-sticky-scroll="hidden"]';
+
+                initStickyScroll(container, content, items, images, hiddenItemSelector);
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <a href="./index.html">HOME</a>
+        </nav>
+
+        <h1>Sticky Scroll 3D</h1>
+
+        <div class="empty">
+            This is the header content. Scroll down to see the panels in action.
+            <br><br>
+            <a href="#one">One</a><br>
+        </div>
+    </header>
+
+    <main>
+        <div id="one" class="container container1" data-gsap="sticky-scroll">
+            <div class="wrapper" data-gsap-sticky-scroll="wrapper">
+                <div class="canvas">
+                    <canvas
+                        data-gsap-canvas3d="canvas"
+                        data-gsap-canvas3d-url="https://www.apple.com/105/media/us/airpods-pro/2019/1299e2f5_9206_4470_b28e_08307a42f19b/anim/sequence/large/01-hero-lightpass/{frame}.jpg"
+                        data-gsap-canvas3d-framecount="147"
+                        data-gsap-canvas3d-framelength="4"
+                    ></canvas>
+                </div>
+
+                <div class="panelsWrapper">
+                    <div class="panels" data-gsap-sticky-scroll="content">
+                        <section class="panel panel1">Panel 1</section>
+                        <section class="panel panel2">Panel 2</section>
+                        <section class="panel panel3">Panel 3</section>
+                        <section class="panel panel4">Panel 4</section>
+                        <section class="panel panel5">Panel 5</section>
+                        <section class="panel panel6">Panel 6</section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Footer Content
+    </footer>
+
+</body>
+
+</html>

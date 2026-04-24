@@ -21,6 +21,10 @@
             width: 50vw;
             min-width: 500px;
         }
+
+        .wrapper {
+            height: 100%;
+        }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
@@ -30,14 +34,7 @@
     <!-- <script src="./barba.js"></script> -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            gsap.registerPlugin(ScrollTrigger);
-
-            const container = document.querySelector('[data-gsap="canvas3d"]');
-            const canvas = container.querySelector('[data-gsap-canvas3d="canvas"]');
-            const url = canvas.dataset.gsapCanvas3dUrl;
-            const framecount = canvas.dataset.gsapCanvas3dFramecount;
-            const framelength = canvas.dataset.gsapCanvas3dFramelength;
+        function initCanvas3d(container, content, canvas, url, framecount, framelength) {
             const context = canvas.getContext('2d');
 
             function render(context, canvas, image) {
@@ -55,7 +52,11 @@
                     snap: 'frame',
                     scrollTrigger: {
                         trigger: container,
-                        scrub: 0.5
+                        start: 'top top',
+                        end: '+=' + content.offsetHeight,
+                        scrub: 1,
+                        invalidateOnRefresh: true,
+                        markers: true,
                     },
                     onUpdate: () => render(context, canvas, images[frames.frame]),
                 });
@@ -75,6 +76,21 @@
                 img.src = url.replace('{frame}', (i + 1).toString().padStart(framelength, '0'));
                 images.push(img);
             }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            const container = document.querySelector('[data-gsap="canvas3d"]');
+            const content = container.querySelector('[data-gsap-canvas3d="content"]');
+            const canvas = container.querySelector('[data-gsap-canvas3d="canvas"]');
+
+            const url = canvas.dataset.gsapCanvas3dUrl;
+            const framecount = canvas.dataset.gsapCanvas3dFramecount;
+            const framelength = canvas.dataset.gsapCanvas3dFramelength;
+
+            initCanvas3d(container, content, canvas, url, framecount, framelength);
         });
     </script>
 
@@ -93,12 +109,14 @@
 
     <main data-barba="container" data-barba-namespace="base">
         <div id="one" class="container container1" data-gsap="canvas3d">
-            <canvas
-                data-gsap-canvas3d="canvas"
-                data-gsap-canvas3d-url="https://www.apple.com/105/media/us/airpods-pro/2019/1299e2f5_9206_4470_b28e_08307a42f19b/anim/sequence/large/01-hero-lightpass/{frame}.jpg"
-                data-gsap-canvas3d-framecount="147"
-                data-gsap-canvas3d-framelength="4"
-            ></canvas>
+            <div class="wrapper" data-gsap-canvas3d="content">
+                <canvas
+                    data-gsap-canvas3d="canvas"
+                    data-gsap-canvas3d-url="https://www.apple.com/105/media/us/airpods-pro/2019/1299e2f5_9206_4470_b28e_08307a42f19b/anim/sequence/large/01-hero-lightpass/{frame}.jpg"
+                    data-gsap-canvas3d-framecount="147"
+                    data-gsap-canvas3d-framelength="4"
+                ></canvas>
+            </div>
         </div>
     </main>
 
