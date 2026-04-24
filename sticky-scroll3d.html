@@ -29,6 +29,16 @@
         .canvas {
             position: relative;
             height: 100%;
+            overflow: hidden;
+        }
+
+        .canvas > canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: black;
+            padding: 20px;
+            border-radius: 10px;
         }
 
         @media screen and (max-width: 1024px) and (orientation: portrait) {
