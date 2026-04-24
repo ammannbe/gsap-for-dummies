@@ -137,8 +137,9 @@
 
     <script>
         // NOTE: this is a 1-to-1 duplicate of the canvas3d.html function
-        function initCanvas3d(container, content, canvas, url, framecount, framelength) {
+        function initCanvas3d(container, content, canvas, url, framecount, framelength, animationLength) {
             const context = canvas.getContext('2d');
+            const contentOffsetHeight = content.offsetHeight * animationLength;
 
             function render(context, canvas, image) {
                 context.clearRect(0, 0, canvas.width, canvas.height);
@@ -156,7 +157,7 @@
                     scrollTrigger: {
                         trigger: container,
                         start: 'top top',
-                        end: '+=' + content.offsetHeight,
+                        end: '+=' + contentOffsetHeight,
                         scrub: 1,
                         invalidateOnRefresh: true,
                         markers: true,
@@ -182,12 +183,14 @@
         }
 
         // NOTE: this is a 1-to-1 duplicate of the canvas3d.html function
-        function initStickyScroll(container, content, items, images, hiddenItemSelector) {
+        function initStickyScroll(container, content, items, images, hiddenItemSelector, animationLength) {
+            const contentOffsetHeight = content.offsetHeight * animationLength;
+
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: container,
                     start: 'top top',
-                    end: '+=' + (content.offsetHeight * 4),
+                    end: '+=' + contentOffsetHeight,
                     scrub: 1,
                     pin: true,
                     invalidateOnRefresh: true,
@@ -257,7 +260,7 @@
                 const framecount = canvas.dataset.gsapCanvas3dFramecount;
                 const framelength = canvas.dataset.gsapCanvas3dFramelength;
 
-                initCanvas3d(container, content, canvas, url, framecount, framelength);
+                initCanvas3d(container, content, canvas, url, framecount, framelength, 4);
 
 
 
@@ -265,7 +268,7 @@
                 const images = container.querySelectorAll('[data-gsap-sticky-scroll="images"] > *');
                 const hiddenItemSelector = '[data-gsap-sticky-scroll="hidden"]';
 
-                initStickyScroll(container, content, items, images, hiddenItemSelector);
+                initStickyScroll(container, content, items, images, hiddenItemSelector, 4);
             });
         });
     </script>

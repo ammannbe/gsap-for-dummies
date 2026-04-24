@@ -63,7 +63,9 @@
 
     <script>
         function initHorizontalScrolling(container, wrapper, content, reverse) {
-            const position = () => Math.max(0, content.scrollWidth - wrapper.clientWidth);
+            const contentScrollWidth = content.scrollWidth;
+            const wrapperClientWidth = wrapper.clientWidth;
+            const position = () => Math.max(0, contentScrollWidth - wrapperClientWidth);
 
             gsap.to(content, {
                 x: () => position() * (reverse ? 1 : -1),

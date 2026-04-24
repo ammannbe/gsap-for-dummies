@@ -36,8 +36,9 @@
     <!-- <script src="./barba.js"></script> -->
 
     <script>
-        function initCanvas3d(container, content, canvas, url, framecount, framelength) {
+        function initCanvas3d(container, content, canvas, url, framecount, framelength, animationLength) {
             const context = canvas.getContext('2d');
+            const contentOffsetHeight = content.offsetHeight * animationLength;
 
             function render(context, canvas, image) {
                 context.clearRect(0, 0, canvas.width, canvas.height);
@@ -55,7 +56,7 @@
                     scrollTrigger: {
                         trigger: container,
                         start: 'top top',
-                        end: '+=' + (content.offsetHeight * 4),
+                        end: '+=' + contentOffsetHeight,
                         scrub: 1,
                         invalidateOnRefresh: true,
                         markers: true,
@@ -92,7 +93,7 @@
             const framecount = canvas.dataset.gsapCanvas3dFramecount;
             const framelength = canvas.dataset.gsapCanvas3dFramelength;
 
-            initCanvas3d(container, content, canvas, url, framecount, framelength);
+            initCanvas3d(container, content, canvas, url, framecount, framelength, 1);
         });
     </script>
 
