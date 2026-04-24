@@ -34,35 +34,40 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
 
     <script>
+        function initSlideinStagger(container, items, reverse) {
+            const position = (i) => {
+                let multiplier = (i % 2 === 0 ? 1 : -1);
+                let distance = gsap.utils.clamp(12, 50, window.innerWidth * 0.05) * multiplier; // 5% of the viewport width, but min. 12px and max. 50px
+
+                return reverse
+                    ? (i + 1) * distance
+                    : (items.length - i) * distance;
+            };
+
+            gsap.fromTo(items, {
+                x: (i) => position(i, 50),
+                opacity: 0,
+                filter: 'blur(5px)',
+            }, {
+                x: (i) => position(i, 50) * -1,
+                opacity: 1,
+                filter: 'blur(0px)',
+                duration: 2,
+                stagger: 0.15,
+                ease: "back.inOut",
+                scrollTrigger: container,
+            });
+        }
+
+
         document.addEventListener('DOMContentLoaded', () => {
             gsap.registerPlugin(ScrollTrigger);
 
             document.querySelectorAll('[data-gsap="slidein"]').forEach((container) => {
                 const items = container.querySelectorAll('[data-gsap-slidein="content"] > *');
-                const reverse = container.dataset.gsapReverse !== undefined;
+                const reverse = container.dataset.gsapSlideinReverse !== undefined;
 
-                const position = (i) => {
-                    let multiplier = (i % 2 === 0 ? 1 : -1);
-                    let distance = gsap.utils.clamp(12, 50, window.innerWidth * 0.05) * multiplier; // 5% of the viewport width, but min. 12px and max. 50px
-
-                    return reverse
-                        ? (i + 1) * distance
-                        : (items.length - i) * distance;
-                };
-
-                gsap.fromTo(items, {
-                    x: (i) => position(i, 50),
-                    opacity: 0,
-                    filter: 'blur(5px)',
-                }, {
-                    x: (i) => position(i, 50) * -1,
-                    opacity: 1,
-                    filter: 'blur(0px)',
-                    duration: 2,
-                    stagger: 0.15,
-                    ease: "back.inOut",
-                    scrollTrigger: container,
-                });
+                initSlideinStagger(container, items, reverse);
             });
         });
     </script>
@@ -101,7 +106,7 @@
 
         <div class="empty">Middle content</div>
 
-        <div id="two" class="container container2" data-gsap="slidein" data-gsap-reverse>
+        <div id="two" class="container container2" data-gsap="slidein" data-gsap-slidein-reverse>
             <div class="wrapper">
                 <div class="panels" data-gsap-slidein="content">
                     <section class="panel panel1">Panel 1</section>

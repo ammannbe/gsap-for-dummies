@@ -62,29 +62,34 @@
     <!-- <script src="./barba.js"></script> -->
 
     <script>
+        function initHorizontalScrolling(container, wrapper, content, reverse) {
+            const position = () => Math.max(0, content.scrollWidth - wrapper.clientWidth);
+
+            gsap.to(content, {
+                x: () => position() * (reverse ? 1 : -1),
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: container,
+                    pin: true,
+                    scrub: 1,
+                    start: 'top top',
+                    end: (i) => '+=' + position(),
+                    invalidateOnRefresh: true,
+                    markers: true
+                }
+            });
+        }
+
+
         document.addEventListener('DOMContentLoaded', () => {
             gsap.registerPlugin(ScrollTrigger);
 
             document.querySelectorAll('[data-gsap="x-scroll"]').forEach((container, i) => {
-                const multiplier = i === 0 ? -1 : 1; // First container scrolls left to right, second right to left
                 const wrapper = container.querySelector('[data-gsap-x-scroll="wrapper"]');
                 const content = container.querySelector('[data-gsap-x-scroll="content"]');
+                const reverse = container.dataset.gsapXScrollReverse !== undefined;
 
-                const position = () => Math.max(0, content.scrollWidth - wrapper.clientWidth);
-
-                gsap.to(content, {
-                    x: () => position() * multiplier,
-                    ease: 'none',
-                    scrollTrigger: {
-                        trigger: container,
-                        pin: true,
-                        scrub: 1,
-                        start: 'top top',
-                        end: (i) => '+=' + position(),
-                        invalidateOnRefresh: true,
-                        markers: true
-                    }
-                });
+                initHorizontalScrolling(container, wrapper, content, reverse);
             });
         });
     </script>
@@ -133,7 +138,7 @@
 
         <div class="empty">Middle content</div>
 
-        <div id="two" class="container container2" data-gsap="x-scroll">
+        <div id="two" class="container container2" data-gsap="x-scroll" data-gsap-x-scroll-reverse>
             <div class="wrapper" data-gsap-x-scroll="wrapper">
                 <div class="panels" data-gsap-x-scroll="content">
                     <section class="panel panel1">Panel 1</section>

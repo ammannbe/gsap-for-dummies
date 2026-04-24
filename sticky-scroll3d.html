@@ -126,6 +126,7 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
 
     <script>
+        // NOTE: this is a 1-to-1 duplicate of the canvas3d.html function
         function initCanvas3d(container, content, canvas, url, framecount, framelength) {
             const context = canvas.getContext('2d');
 
@@ -170,6 +171,7 @@
             }
         }
 
+        // NOTE: this is a 1-to-1 duplicate of the canvas3d.html function
         function initStickyScroll(container, content, items, images, hiddenItemSelector) {
             const tl = gsap.timeline({
                 scrollTrigger: {
@@ -278,7 +280,7 @@
 
     <main>
         <div id="one" class="container container1" data-gsap="sticky-scroll">
-            <div class="wrapper" data-gsap-sticky-scroll="wrapper">
+            <div class="wrapper">
                 <div class="canvas">
                     <canvas
                         data-gsap-canvas3d="canvas"

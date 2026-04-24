@@ -126,74 +126,80 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
 
     <script>
+        function initStickyScroll(container, content, items, images, hiddenItemSelector) {
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: container,
+                    start: 'top top',
+                    end: '+=' + content.offsetHeight,
+                    scrub: 1,
+                    pin: true,
+                    invalidateOnRefresh: true,
+                    markers: true,
+                }
+            });
+
+            let moveY = 0;
+            items.forEach((item, index) => {
+                const gap = parseFloat(getComputedStyle(content).gap) || 0;
+
+                moveY += items[index - 1]
+                    ? items[index - 1].offsetHeight + gap
+                    : 0;
+
+                tl.to(content, {
+                    y: moveY * -1,
+                    duration: 0,
+                    ease: 'none',
+                }, index);
+
+                tl.to(item, {
+                    opacity: 1,
+                    duration: 0,
+                }, index);
+
+                // It's important that we always set tl.to(...), even if image[index] is null
+                // -> otherwise the calculations won't be correct
+                tl.to(images[index] ?? null, {
+                    opacity: 1,
+                    duration: 0.4,
+                }, index);
+
+                const hiddenItem = item.querySelector(hiddenItemSelector);
+                const hiddenItemHeight = hiddenItem?.offsetHeight || 0;
+
+                gsap.set(hiddenItem, { height: 0 });
+
+                // It's important that we always set tl.to(...), even if hiddenItem is null
+                // -> otherwise the calculations won't be correct
+                tl.to(hiddenItem, {
+                    opacity: 1,
+                    height: hiddenItemHeight,
+                    duration: 0,
+                }, index);
+
+                const prevItem = items[index - 1] || null
+                const hiddenPrevItem = prevItem?.querySelector(hiddenItemSelector);
+                tl.to(hiddenPrevItem, {
+                    opacity: 0,
+                    height: 0,
+                    duration: 0,
+                }, index);
+            });
+        }
+
+
         document.addEventListener('DOMContentLoaded', () => {
             gsap.registerPlugin(ScrollTrigger);
 
             document.querySelectorAll('[data-gsap="sticky-scroll"]').forEach((container) => {
-                const wrapper = container.querySelectorAll('[data-gsap-sticky-scroll="wrapper"]');
-                const images = container.querySelectorAll('[data-gsap-sticky-scroll="images"] > *');
                 const content = container.querySelector('[data-gsap-sticky-scroll="content"]');
+
                 const items = content.querySelectorAll('[data-gsap-sticky-scroll="content"] > *');
+                const images = container.querySelectorAll('[data-gsap-sticky-scroll="images"] > *');
+                const hiddenItemSelector = '[data-gsap-sticky-scroll="hidden"]';
 
-                const tl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: container,
-                        start: 'top top',
-                        end: '+=' + content.offsetHeight,
-                        scrub: 1,
-                        pin: true,
-                        invalidateOnRefresh: true,
-                        markers: true,
-                    }
-                });
-
-                let moveY = 0;
-                items.forEach((item, index) => {
-                    const gap = parseFloat(getComputedStyle(content).gap) || 0;
-
-                    moveY += items[index - 1]
-                        ? items[index - 1].offsetHeight + gap
-                        : 0;
-
-                    tl.to(content, {
-                        y: moveY * -1,
-                        duration: 0,
-                        ease: 'none',
-                    }, index);
-
-                    tl.to(item, {
-                        opacity: 1,
-                        duration: 0,
-                    }, index);
-
-                    // It's important that we always set tl.to(...), even if image[index] is null
-                    // -> otherwise the calculations won't be correct
-                    tl.to(images[index] ?? null, {
-                        opacity: 1,
-                        duration: 0.4,
-                    }, index);
-
-                    const hiddenItem = item.querySelector('[data-gsap-sticky-scroll="hidden"]');
-                    const hiddenItemHeight = hiddenItem?.offsetHeight || 0;
-
-                    gsap.set(hiddenItem, { height: 0 });
-
-                    // It's important that we always set tl.to(...), even if hiddenItem is null
-                    // -> otherwise the calculations won't be correct
-                    tl.to(hiddenItem, {
-                        opacity: 1,
-                        height: hiddenItemHeight,
-                        duration: 0,
-                    }, index);
-
-                    const prevItem = items[index - 1] || null
-                    const hiddenPrevItem = prevItem?.querySelector('[data-gsap-sticky-scroll="hidden"]');
-                    tl.to(hiddenPrevItem, {
-                        opacity: 0,
-                        height: 0,
-                        duration: 0,
-                    }, index);
-                });
+                initStickyScroll(container, content, items, images, hiddenItemSelector);
             });
         });
     </script>
@@ -220,7 +226,7 @@
 
     <main>
         <div id="one" class="container container1" data-gsap="sticky-scroll">
-            <div class="wrapper" data-gsap-sticky-scroll="wrapper">
+            <div class="wrapper">
                 <div class="images" data-gsap-sticky-scroll="images">
                     <img class="image image1" src="https://picsum.photos/1500/2000?v1" alt="image-1">
                     <img class="image image2" src="https://picsum.photos/1500/2000?v2" alt="image-2">
@@ -246,7 +252,7 @@
         <div class="empty">Middle content</div>
 
         <div id="two" class="container container2" data-gsap="sticky-scroll">
-            <div class="wrapper" data-gsap-sticky-scroll="wrapper">
+            <div class="wrapper">
                 <div class="panelsWrapper">
                     <div class="panels" data-gsap-sticky-scroll="content">
                         <section class="panel panel1">Panel 1</section>
@@ -263,7 +269,7 @@
         <div class="empty">Middle content</div>
 
         <div id="three" class="container container3" data-gsap="sticky-scroll">
-            <div class="wrapper" data-gsap-sticky-scroll="wrapper">
+            <div class="wrapper">
                 <div class="panelsWrapper">
                     <div class="panels" data-gsap-sticky-scroll="content">
                         <section class="panel panel1">
