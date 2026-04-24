@@ -45,6 +45,22 @@
                 context.drawImage(image, 0, 0);
             }
 
+            function initload(img) {
+                // Set canvas context size based on the specified image
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                gsap.to(frames, {
+                    frame: framecount - 1,
+                    snap: 'frame',
+                    scrollTrigger: {
+                        trigger: container,
+                        scrub: 0.5
+                    },
+                    onUpdate: () => render(context, canvas, images[frames.frame]),
+                });
+            }
+
 
             const images = []
             const frames = { frame: 0 };
@@ -52,25 +68,8 @@
             for (let i = 0; i < framecount; i++) {
                 const img = new Image();
 
-                if (i === 0) {
-                    img.onload = () => {
-                        // Set canvas context size based on the first image
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-
-                        // Render first image
-                        render(context, canvas, images[frames.frame]);
-
-                        gsap.to(frames, {
-                            frame: framecount - 1,
-                            snap: 'frame',
-                            scrollTrigger: {
-                                trigger: container,
-                                scrub: 0.5
-                            },
-                            onUpdate: () => render(context, canvas, images[frames.frame]),
-                        });
-                    }
+                if (i === (framecount - 1)) {
+                    img.onload = () => initload(img);
                 }
 
                 img.src = url.replace('{frame}', (i + 1).toString().padStart(framelength, '0'));
