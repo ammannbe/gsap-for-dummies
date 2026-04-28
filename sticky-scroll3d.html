@@ -256,12 +256,13 @@
 
 
                 const canvas = container.querySelector('[data-gsap-canvas3d="canvas"]');
-                const url = canvas.dataset.gsapCanvas3dUrl;
-                const framecount = canvas.dataset.gsapCanvas3dFramecount;
-                const framelength = canvas.dataset.gsapCanvas3dFramelength;
+                if (canvas) {
+                    const url = canvas.dataset.gsapCanvas3dUrl;
+                    const framecount = canvas.dataset.gsapCanvas3dFramecount;
+                    const framelength = canvas.dataset.gsapCanvas3dFramelength;
 
-                initCanvas3d(container, content, canvas, url, framecount, framelength, 4);
-
+                    initCanvas3d(container, content, canvas, url, framecount, framelength, 4);
+                }
 
 
                 const items = content.querySelectorAll('[data-gsap-sticky-scroll="content"] > *');
