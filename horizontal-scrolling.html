@@ -9,6 +9,12 @@
     <link rel="stylesheet" href="./style.css">
 
     <style>
+        .container1 {
+            flex-direction: column;
+            justify-content: center;
+            gap: 50px;
+        }
+
         .wrapper {
             display: flex;
         }
@@ -52,6 +58,35 @@
         @media screen and (max-width: 600px) {
             .panel { --width: 100px; }
         }
+
+        .scroll-indicator {
+            display: flex;
+            align-items: flex-end;
+            width: 250px;
+            height: 5px;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .scroll-indicator__thumb--outer {
+            cursor: grab;
+            touch-action: none;
+            width: 65px;
+            padding-top: 10px;
+            box-sizing: content-box;
+            transform: translate(0, 0);
+        }
+
+        .scroll-indicator__thumb--outer.dragging {
+            cursor: grabbing;
+        }
+
+        .scroll-indicator__thumb--inner {
+            height: 5px;
+            border-radius: 10px;
+            background: #000;
+        }
     </style>
 
 
@@ -62,12 +97,21 @@
     <!-- <script src="./barba.js"></script> -->
 
     <script>
-        function initHorizontalScrolling(container, wrapper, content, reverse) {
+        function initHorizontalScrolling(container, wrapper, content, reverse, scrollbar) {
             const contentScrollWidth = content.scrollWidth;
             const wrapperClientWidth = wrapper.clientWidth;
             const position = () => Math.max(0, contentScrollWidth - wrapperClientWidth);
 
-            gsap.to(content, {
+
+            const indicator = scrollbar?.indicator;
+            const thumb = scrollbar?.thumb;
+            const thumbMaxX = () => indicator?.clientWidth - thumb?.clientWidth;
+            let isDragging = false;
+            let startPointerX = 0;
+            let startThumbX = 0;
+
+
+            const xTween = gsap.to(content, {
                 x: () => position() * (reverse ? 1 : -1),
                 ease: 'none',
                 scrollTrigger: {
@@ -75,11 +119,72 @@
                     pin: true,
                     scrub: 1,
                     start: 'top top',
-                    end: (i) => '+=' + position(),
+                    end: () => '+=' + position(),
                     invalidateOnRefresh: true,
-                    markers: true
+                    markers: true,
+                    onUpdate(self) {
+                        if (thumb && !isDragging) {
+                            gsap.set(thumb, { x: self.progress * thumbMaxX() });
+                        }
+                    },
                 }
             });
+
+
+            if (indicator && thumb) {
+                const xTweenTrigger = xTween.scrollTrigger;
+
+                function updateScrollFromThumb(x) {
+                    const progress = gsap.utils.clamp(0, 1, x / thumbMaxX());
+                    const scrollY = xTweenTrigger.start + progress * (xTweenTrigger.end - xTweenTrigger.start);
+
+                    window.scrollTo({
+                        top: scrollY,
+                        behavior: 'auto'
+                    });
+                }
+
+                function toggleDragging(dragging = true) {
+                    isDragging = dragging;
+                    isDragging
+                        ? thumb.classList.add('dragging')
+                        : thumb.classList.remove('dragging');
+                }
+
+                thumb.addEventListener('pointerdown', (event) => {
+                    toggleDragging(true);
+                    startPointerX = event.clientX;
+                    startThumbX = gsap.getProperty(thumb, 'x');
+
+                    thumb.setPointerCapture(event.pointerId);
+                    event.preventDefault();
+                });
+
+                thumb.addEventListener('pointermove', (event) => {
+                    if (!isDragging) return;
+
+                    const deltaX = event.clientX - startPointerX;
+                    const nextX = gsap.utils.clamp(0, thumbMaxX(), startThumbX + deltaX);
+
+                    gsap.set(thumb, { x: nextX });
+                    updateScrollFromThumb(nextX);
+                });
+
+                thumb.addEventListener('pointerup', () => toggleDragging(false));
+                thumb.addEventListener('pointercancel', () => toggleDragging(false));
+                thumb.addEventListener('pointerleave', () => toggleDragging(false));
+
+                indicator.addEventListener('pointerdown', (event) => {
+                    if (event.target === thumb) return;
+
+                    const rect = indicator.getBoundingClientRect();
+                    const x = event.clientX - rect.left - thumb.clientWidth / 2;
+                    const nextX = gsap.utils.clamp(0, thumbMaxX(), x);
+
+                    gsap.set(thumb, { x: nextX });
+                    updateScrollFromThumb(nextX);
+                });
+            }
         }
 
 
@@ -91,7 +196,10 @@
                 const content = container.querySelector('[data-gsap-x-scroll="content"]');
                 const reverse = container.dataset.gsapXScrollReverse !== undefined;
 
-                initHorizontalScrolling(container, wrapper, content, reverse);
+                const indicator = container.querySelector('[data-gsap-x-scroll="indicator"]');
+                const thumb = container.querySelector('[data-gsap-x-scroll="thumb"]');
+
+                initHorizontalScrolling(container, wrapper, content, reverse, { indicator, thumb });
             });
         });
     </script>
@@ -134,6 +242,12 @@
                     <section class="panel panel10">Panel 10</section>
                     <section class="panel panel11">Panel 11</section>
                     <section class="panel panel12">Panel 12</section>
+                </div>
+            </div>
+
+            <div class="scroll-indicator" data-gsap-x-scroll="indicator">
+                <div class="scroll-indicator__thumb--outer" data-gsap-x-scroll="thumb">
+                    <div class="scroll-indicator__thumb--inner"></div>
                 </div>
             </div>
         </div>
