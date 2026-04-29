@@ -126,8 +126,24 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
 
     <script>
-        function initStickyScroll(container, content, items, images, hiddenItemSelector, animationLength) {
-            const contentOffsetHeight = content.offsetHeight * animationLength;
+        /**
+         * Initializes a scroll-driven sticky animation using GSAP ScrollTrigger.
+         *
+         * Pins a container during scroll and progressively reveals items, images,
+         * and optional hidden sub-elements while translating the content vertically.
+         *
+         * @param {HTMLElement} container - The outer wrapper that acts as the scroll trigger and pinned section.
+         * @param {HTMLElement} content - The inner element that is translated vertically during scrolling.
+         * @param {HTMLElement[]} items - List of content items that are revealed step-by-step.
+         * @param {HTMLElement[]} images - List of images corresponding to each item (faded in on activation).
+         * @param {string} hiddenItemSelector - Selector for a nested element inside each item that expands/collapses.
+         * @param {number} scrollMultiplier - Multiplier defining total scroll distance based on content height.
+         * @param {number} keepActive - Number of previous items that remain active before scrolling out of view.
+         *
+         * @returns {void}
+         */
+        function initStickyScroll(container, content, items, images, hiddenItemSelector, scrollMultiplier, keepActive) {
+            const contentOffsetHeight = content.offsetHeight * scrollMultiplier;
 
             const tl = gsap.timeline({
                 scrollTrigger: {
@@ -145,8 +161,8 @@
             items.forEach((item, index) => {
                 const gap = parseFloat(getComputedStyle(content).gap) || 0;
 
-                moveY += items[index - 1]
-                    ? items[index - 1].offsetHeight + gap
+                moveY += items[index - keepActive]
+                    ? items[index - keepActive].offsetHeight + gap
                     : 0;
 
                 tl.to(content, {
@@ -160,9 +176,7 @@
                     duration: 0,
                 }, index);
 
-                // It's important that we always set tl.to(...), even if image[index] is null
-                // -> otherwise the calculations won't be correct
-                tl.to(images[index] ?? null, {
+                tl.to(images[index] ?? {}, {
                     opacity: 1,
                     duration: 0.4,
                 }, index);
@@ -170,11 +184,9 @@
                 const hiddenItem = item.querySelector(hiddenItemSelector);
                 const hiddenItemHeight = hiddenItem?.offsetHeight || 0;
 
-                gsap.set(hiddenItem, { height: 0 });
+                gsap.set(hiddenItem ?? {}, { height: 0 });
 
-                // It's important that we always set tl.to(...), even if hiddenItem is null
-                // -> otherwise the calculations won't be correct
-                tl.to(hiddenItem, {
+                tl.to(hiddenItem ?? {}, {
                     opacity: 1,
                     height: hiddenItemHeight,
                     duration: 0,
@@ -182,7 +194,7 @@
 
                 const prevItem = items[index - 1] || null
                 const hiddenPrevItem = prevItem?.querySelector(hiddenItemSelector);
-                tl.to(hiddenPrevItem, {
+                tl.to(hiddenPrevItem ?? {}, {
                     opacity: 0,
                     height: 0,
                     duration: 0,
@@ -201,7 +213,7 @@
                 const images = container.querySelectorAll('[data-gsap-sticky-scroll="images"] > *');
                 const hiddenItemSelector = '[data-gsap-sticky-scroll="hidden"]';
 
-                initStickyScroll(container, content, items, images, hiddenItemSelector, 4);
+                initStickyScroll(container, content, items, images, hiddenItemSelector, 4, 1);
             });
         });
     </script>
