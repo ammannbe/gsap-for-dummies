@@ -35,26 +35,33 @@
 
     <script>
         function initSlideinStagger(container, items, reverse) {
-            const position = (i) => {
+            function from(i) {
                 let multiplier = (i % 2 === 0 ? 1 : -1);
-                let distance = gsap.utils.clamp(12, 50, window.innerWidth * 0.05) * multiplier; // 5% of the viewport width, but min. 12px and max. 50px
+                let distance = (items[i].clientWidth / 2) + (window.innerWidth / 2);
+
+                return distance * multiplier;
+            }
+
+            function to(i) {
+                let multiplier = (i % 2 === 0 ? -1 : 1);
+                let distance = gsap.utils.clamp(12, 100, window.innerWidth * 0.04); // 5% of the viewport width, but min. 12px and max. 50px
 
                 return reverse
-                    ? (i + 1) * distance
-                    : (items.length - i) * distance;
+                    ? (i + 1) * distance * multiplier
+                    : (items.length - i) * distance * multiplier;
             };
 
             gsap.fromTo(items, {
-                x: (i) => position(i),
+                x: (i) => from(i),
                 opacity: 0,
                 filter: 'blur(5px)',
             }, {
-                x: (i) => position(i) * -1,
+                x: (i) => to(i),
                 opacity: 1,
                 filter: 'blur(0px)',
                 duration: 2,
                 stagger: 0.15,
-                ease: "back.inOut",
+                ease: "power4.out",
                 scrollTrigger: container,
             });
         }
