@@ -183,8 +183,8 @@
         }
 
         // NOTE: this is a 1-to-1 duplicate of the canvas3d.html function
-        function initStickyScroll(container, content, items, images, hiddenItemSelector, animationLength) {
-            const contentOffsetHeight = content.offsetHeight * animationLength;
+        function initStickyScroll(container, content, items, images, hiddenItemSelector, scrollMultiplier, keepActive) {
+            const contentOffsetHeight = content.offsetHeight * scrollMultiplier;
 
             const tl = gsap.timeline({
                 scrollTrigger: {
@@ -202,8 +202,8 @@
             items.forEach((item, index) => {
                 const gap = parseFloat(getComputedStyle(content).gap) || 0;
 
-                moveY += items[index - 1]
-                    ? items[index - 1].offsetHeight + gap
+                moveY += items[index - keepActive]
+                    ? items[index - keepActive].offsetHeight + gap
                     : 0;
 
                 tl.to(content, {
@@ -217,9 +217,7 @@
                     duration: 0,
                 }, index);
 
-                // It's important that we always set tl.to(...), even if image[index] is null
-                // -> otherwise the calculations won't be correct
-                tl.to(images[index] ?? null, {
+                tl.to(images[index] ?? {}, {
                     opacity: 1,
                     duration: 0.4,
                 }, index);
@@ -227,11 +225,9 @@
                 const hiddenItem = item.querySelector(hiddenItemSelector);
                 const hiddenItemHeight = hiddenItem?.offsetHeight || 0;
 
-                gsap.set(hiddenItem, { height: 0 });
+                gsap.set(hiddenItem ?? {}, { height: 0 });
 
-                // It's important that we always set tl.to(...), even if hiddenItem is null
-                // -> otherwise the calculations won't be correct
-                tl.to(hiddenItem, {
+                tl.to(hiddenItem ?? {}, {
                     opacity: 1,
                     height: hiddenItemHeight,
                     duration: 0,
@@ -239,7 +235,7 @@
 
                 const prevItem = items[index - 1] || null
                 const hiddenPrevItem = prevItem?.querySelector(hiddenItemSelector);
-                tl.to(hiddenPrevItem, {
+                tl.to(hiddenPrevItem ?? {}, {
                     opacity: 0,
                     height: 0,
                     duration: 0,
@@ -269,7 +265,7 @@
                 const images = container.querySelectorAll('[data-gsap-sticky-scroll="images"] > *');
                 const hiddenItemSelector = '[data-gsap-sticky-scroll="hidden"]';
 
-                initStickyScroll(container, content, items, images, hiddenItemSelector, 4);
+                initStickyScroll(container, content, items, images, hiddenItemSelector, 4, 1);
             });
         });
     </script>
