@@ -45,11 +45,11 @@
             };
 
             gsap.fromTo(items, {
-                x: (i) => position(i, 50),
+                x: (i) => position(i),
                 opacity: 0,
                 filter: 'blur(5px)',
             }, {
-                x: (i) => position(i, 50) * -1,
+                x: (i) => position(i) * -1,
                 opacity: 1,
                 filter: 'blur(0px)',
                 duration: 2,
