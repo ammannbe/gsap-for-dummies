@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GSAP Horizontal Scroll</title>
 
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="../style.css">
 
     <style>
         .container1 {
@@ -93,117 +93,7 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
 
-    <script src="https://unpkg.com/@barba/core"></script>
-    <!-- <script src="./barba.js"></script> -->
-
-    <script>
-        function initHorizontalScrolling(container, wrapper, content, reverse, scrollbar) {
-            const contentScrollWidth = content.scrollWidth;
-            const wrapperClientWidth = wrapper.clientWidth;
-            const position = () => Math.max(0, contentScrollWidth - wrapperClientWidth);
-
-
-            const indicator = scrollbar?.indicator;
-            const thumb = scrollbar?.thumb;
-            const thumbMaxX = () => indicator?.clientWidth - thumb?.clientWidth;
-            let isDragging = false;
-            let startPointerX = 0;
-            let startThumbX = 0;
-
-
-            const xTween = gsap.to(content, {
-                x: () => position() * (reverse ? 1 : -1),
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: container,
-                    pin: true,
-                    scrub: 1,
-                    start: 'top top',
-                    end: () => '+=' + position(),
-                    invalidateOnRefresh: true,
-                    markers: true,
-                    onUpdate(self) {
-                        if (thumb && !isDragging) {
-                            gsap.set(thumb, { x: self.progress * thumbMaxX() });
-                        }
-                    },
-                }
-            });
-
-
-            if (indicator && thumb) {
-                const xTweenTrigger = xTween.scrollTrigger;
-
-                function updateScrollFromThumb(x) {
-                    const progress = gsap.utils.clamp(0, 1, x / thumbMaxX());
-                    const scrollY = xTweenTrigger.start + progress * (xTweenTrigger.end - xTweenTrigger.start);
-
-                    window.scrollTo({
-                        top: scrollY,
-                        behavior: 'auto'
-                    });
-                }
-
-                function toggleDragging(dragging = true) {
-                    isDragging = dragging;
-                    isDragging
-                        ? thumb.classList.add('dragging')
-                        : thumb.classList.remove('dragging');
-                }
-
-                thumb.addEventListener('pointerdown', (event) => {
-                    toggleDragging(true);
-                    startPointerX = event.clientX;
-                    startThumbX = gsap.getProperty(thumb, 'x');
-
-                    thumb.setPointerCapture(event.pointerId);
-                    event.preventDefault();
-                });
-
-                thumb.addEventListener('pointermove', (event) => {
-                    if (!isDragging) return;
-
-                    const deltaX = event.clientX - startPointerX;
-                    const nextX = gsap.utils.clamp(0, thumbMaxX(), startThumbX + deltaX);
-
-                    gsap.set(thumb, { x: nextX });
-                    updateScrollFromThumb(nextX);
-                });
-
-                thumb.addEventListener('pointerup', () => toggleDragging(false));
-                thumb.addEventListener('pointercancel', () => toggleDragging(false));
-                thumb.addEventListener('pointerleave', () => toggleDragging(false));
-
-                indicator.addEventListener('pointerdown', (event) => {
-                    if (event.target === thumb) return;
-
-                    const rect = indicator.getBoundingClientRect();
-                    const x = event.clientX - rect.left - thumb.clientWidth / 2;
-                    const nextX = gsap.utils.clamp(0, thumbMaxX(), x);
-
-                    gsap.set(thumb, { x: nextX });
-                    updateScrollFromThumb(nextX);
-                });
-            }
-        }
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            gsap.registerPlugin(ScrollTrigger);
-
-            document.querySelectorAll('[data-gsap="x-scroll"]').forEach((container, i) => {
-                const wrapper = container.querySelector('[data-gsap-x-scroll="wrapper"]');
-                const content = container.querySelector('[data-gsap-x-scroll="content"]');
-                const reverse = container.dataset.gsapXScrollReverse !== undefined;
-
-                const indicator = container.querySelector('[data-gsap-x-scroll="indicator"]');
-                const thumb = container.querySelector('[data-gsap-x-scroll="thumb"]');
-
-                initHorizontalScrolling(container, wrapper, content, reverse, { indicator, thumb });
-            });
-        });
-    </script>
-
+    <script type="module" src="../app.js"></script>
 </head>
 
 <body data-barba="wrapper">
@@ -211,7 +101,7 @@
 
     <header>
         <nav>
-            <a href="./index.html">HOME</a>
+            <a href="/">HOME</a>
         </nav>
 
         <h1>Horizontal Scrolling</h1>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas 3D</title>
+
+    <link rel="stylesheet" href="../style.css">
+
+    <style>
+        .container {
+            height: 5000px;
+            background: black;
+        }
+
+        .container canvas {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 500px;
+            width: 50vw;
+            margin-top: 40px;
+        }
+
+        .wrapper {
+            height: 100%;
+        }
+    </style>
+
+    <script type="module" src="../app.js"></script>
+</head>
+
+<body data-barba="wrapper">
+    <div data-barba-transition></div>
+
+    <header>
+        <nav>
+            <a href="/">HOME</a>
+        </nav>
+
+        <h1>Canvas 3D</h1>
+    </header>
+
+    <main data-barba="container" data-barba-namespace="base">
+        <div id="one" class="container container1" data-gsap="canvas3d" data-gsap-canvas3d-options='{ "url": "https://www.apple.com/105/media/us/airpods-pro/2019/1299e2f5_9206_4470_b28e_08307a42f19b/anim/sequence/large/01-hero-lightpass/{frame}.jpg", "framecount": 147, "framelength": 4 }'>
+            <div class="wrapper" data-gsap-canvas3d="content">
+                <canvas data-gsap-canvas3d="canvas"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Footer Content
+    </footer>
+
+</body>
+
+</html>

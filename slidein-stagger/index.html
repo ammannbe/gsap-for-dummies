@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GSAP Slide-In Toggle</title>
 
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="../style.css">
 
     <style>
         .container {
@@ -29,56 +29,7 @@
         }
     </style>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
-
-    <script>
-        function initSlideinStagger(container, items, reverse) {
-            function from(i) {
-                let multiplier = (i % 2 === 0 ? 1 : -1);
-                let distance = (items[i].clientWidth / 2) + (window.innerWidth / 2);
-
-                return distance * multiplier;
-            }
-
-            function to(i) {
-                let multiplier = (i % 2 === 0 ? -1 : 1);
-                let distance = gsap.utils.clamp(12, 100, window.innerWidth * 0.04); // 5% of the viewport width, but min. 12px and max. 50px
-
-                return reverse
-                    ? (i + 1) * distance * multiplier
-                    : (items.length - i) * distance * multiplier;
-            };
-
-            gsap.fromTo(items, {
-                x: (i) => from(i),
-                opacity: 0,
-                filter: 'blur(5px)',
-            }, {
-                x: (i) => to(i),
-                opacity: 1,
-                filter: 'blur(0px)',
-                duration: 2,
-                stagger: 0.15,
-                ease: "power4.out",
-                scrollTrigger: container,
-            });
-        }
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            gsap.registerPlugin(ScrollTrigger);
-
-            document.querySelectorAll('[data-gsap="slidein"]').forEach((container) => {
-                const items = container.querySelectorAll('[data-gsap-slidein="content"] > *');
-                const reverse = container.dataset.gsapSlideinReverse !== undefined;
-
-                initSlideinStagger(container, items, reverse);
-            });
-        });
-    </script>
-
+    <script type="module" src="../app.js"></script>
 </head>
 
 <body>
@@ -113,7 +64,7 @@
 
         <div class="empty">Middle content</div>
 
-        <div id="two" class="container container2" data-gsap="slidein" data-gsap-slidein-reverse>
+        <div id="two" class="container container2" data-gsap="slidein" data-gsap-slidein-options='{ "reverse": true }'>
             <div class="wrapper">
                 <div class="panels" data-gsap-slidein="content">
                     <section class="panel panel1">Panel 1</section>

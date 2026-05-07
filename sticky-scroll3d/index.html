@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GSAP Sticky Scroll 3D</title>
+
+    <link rel="stylesheet" href="../style.css">
+
+    <style>
+        .wrapper {
+            display: flex;
+            gap: 20px;
+            height: 100%;
+            position: relative;
+        }
+
+        .wrapper > * {
+            width: 100%;
+        }
+
+        @media screen and (max-width: 1024px) and (orientation: portrait) {
+            .wrapper {
+                flex-direction: column;
+            }
+        }
+
+        .canvas {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .canvas > canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: black;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        @media screen and (max-width: 1024px) and (orientation: portrait) {
+            .canvas {
+                height: auto;
+                aspect-ratio: 16/9;
+            }
+        }
+
+        .image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: #ccc;
+            border-radius: 10px;
+        }
+
+        .image:not(:first-child) {
+            opacity: 0;
+        }
+
+        .panelsWrapper {
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        .panels {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            will-change: transform;
+            transition: transform 200ms ease-in-out;
+        }
+
+        .panel {
+            width: 100%;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            padding: 20px;
+
+            opacity: 0.3;
+            transition: opacity 200ms ease-in-out;
+        }
+
+        .panelText {
+            text-align: center;
+        }
+
+        .panel1 {
+            height: 200px;
+        }
+
+        .panel3 {
+            height: 600px;
+        }
+
+        .panel6 {
+            height: 100px;
+        }
+
+        .container2 .panel6 {
+            height: 150px;
+        }
+
+        .container3 .wrapper {
+            min-height: 500px;
+            max-height: 640px;
+
+            min-width: 500px;
+            max-width: 2000px;
+
+            margin-inline: auto;
+        }
+
+        .container3 .panel {
+            height: auto;
+        }
+
+        .container .panel .panelText {
+            font-size: 1.3rem;
+            transition: height 200ms ease-in-out,
+                        opacity 200ms ease-in-out;
+            overflow: hidden;
+        }
+    </style>
+
+    <script type="module" src="../app.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <a href="/">HOME</a>
+        </nav>
+
+        <h1>Sticky Scroll 3D</h1>
+
+        <div class="empty">
+            This is the header content. Scroll down to see the panels in action.
+            <br><br>
+            <a href="#one">One</a><br>
+        </div>
+    </header>
+
+    <main>
+        <div id="one" class="container container1" data-gsap="sticky-scroll" data-gsap-canvas3d-options='{ "url": "https://www.apple.com/105/media/us/airpods-pro/2019/1299e2f5_9206_4470_b28e_08307a42f19b/anim/sequence/large/01-hero-lightpass/{frame}.jpg", "framecount": 147, "framelength": 4 }'>
+            <div class="wrapper">
+                <div class="canvas">
+                    <canvas data-gsap-canvas3d="canvas"></canvas>
+                </div>
+
+                <div class="panelsWrapper">
+                    <div class="panels" data-gsap-sticky-scroll="content">
+                        <section class="panel panel1">Panel 1</section>
+                        <section class="panel panel2">Panel 2</section>
+                        <section class="panel panel3">Panel 3</section>
+                        <section class="panel panel4">Panel 4</section>
+                        <section class="panel panel5">Panel 5</section>
+                        <section class="panel panel6">Panel 6</section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Footer Content
+    </footer>
+
+</body>
+
+</html>

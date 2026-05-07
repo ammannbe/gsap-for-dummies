@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GSAP Sticky Scroll</title>
 
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="../style.css">
 
     <style>
         .wrapper {
@@ -121,126 +121,30 @@
         }
     </style>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
-
-    <script>
-        /**
-         * Initializes a scroll-driven sticky animation using GSAP ScrollTrigger.
-         *
-         * Pins a container during scroll and progressively reveals items, images,
-         * and optional hidden sub-elements while translating the content vertically.
-         *
-         * @param {HTMLElement} container - The outer wrapper that acts as the scroll trigger and pinned section.
-         * @param {HTMLElement} content - The inner element that is translated vertically during scrolling.
-         * @param {HTMLElement[]} items - List of content items that are revealed step-by-step.
-         * @param {HTMLElement[]} images - List of images corresponding to each item (faded in on activation).
-         * @param {string} hiddenItemSelector - Selector for a nested element inside each item that expands/collapses.
-         * @param {number} scrollMultiplier - Multiplier defining total scroll distance based on content height.
-         * @param {number} keepActive - Number of previous items that remain active before scrolling out of view.
-         *
-         * @returns {void}
-         */
-        function initStickyScroll(container, content, items, images, hiddenItemSelector, scrollMultiplier, keepActive) {
-            const contentOffsetHeight = content.offsetHeight * scrollMultiplier;
-
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: container,
-                    start: 'top top',
-                    end: '+=' + contentOffsetHeight,
-                    scrub: 1,
-                    pin: true,
-                    invalidateOnRefresh: true,
-                    markers: true,
-                }
-            });
-
-            let moveY = 0;
-            items.forEach((item, index) => {
-                const gap = parseFloat(getComputedStyle(content).gap) || 0;
-
-                moveY += items[index - keepActive]
-                    ? items[index - keepActive].offsetHeight + gap
-                    : 0;
-
-                tl.to(content, {
-                    y: moveY * -1,
-                    duration: 0,
-                    ease: 'none',
-                }, index);
-
-                tl.to(item, {
-                    opacity: 1,
-                    duration: 0,
-                }, index);
-
-                tl.to(images[index] ?? {}, {
-                    opacity: 1,
-                    duration: 0.4,
-                }, index);
-
-                const hiddenItem = item.querySelector(hiddenItemSelector);
-                const hiddenItemHeight = hiddenItem?.offsetHeight || 0;
-
-                gsap.set(hiddenItem ?? {}, { height: 0 });
-
-                tl.to(hiddenItem ?? {}, {
-                    opacity: 1,
-                    height: hiddenItemHeight,
-                    duration: 0,
-                }, index);
-
-                const prevItem = items[index - 1] || null
-                const hiddenPrevItem = prevItem?.querySelector(hiddenItemSelector);
-                tl.to(hiddenPrevItem ?? {}, {
-                    opacity: 0,
-                    height: 0,
-                    duration: 0,
-                }, index);
-            });
-        }
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            gsap.registerPlugin(ScrollTrigger);
-
-            document.querySelectorAll('[data-gsap="sticky-scroll"]').forEach((container) => {
-                const content = container.querySelector('[data-gsap-sticky-scroll="content"]');
-
-                const items = content.querySelectorAll('[data-gsap-sticky-scroll="content"] > *');
-                const images = container.querySelectorAll('[data-gsap-sticky-scroll="images"] > *');
-                const hiddenItemSelector = '[data-gsap-sticky-scroll="hidden"]';
-
-                initStickyScroll(container, content, items, images, hiddenItemSelector, 4, 1);
-            });
-        });
-    </script>
-
+    <script type="module" src="../app.js"></script>
 </head>
 
 <body>
 
     <header>
         <nav>
-            <a href="./index.html">HOME</a>
+            <a href="/">HOME</a>
         </nav>
 
         <h1>Sticky Scroll</h1>
 
         <div class="empty">
-            This is the header content. Scroll down to see the panels in action.
-            <br><br>
-            <a href="#zero">Zero</a><br>
-            <a href="#one">One</a><br>
-            <a href="#two">Two</a><br>
-            <a href="#three">Three</a><br>
+            <span>This is the header content. Scroll down to see the panels in action.</span>
+            <div><br></div>
+            <span><a href="#zero">Zero</a>: Panels <strong>with</strong> hidden content, always 2. panel active</span><br>
+            <span><a href="#one">One</a>: Panels with images</span><br>
+            <span><a href="#two">Two</a>: Panels <strong>without</strong> hidden content</span><br>
+            <span><a href="#three">Three</a>: Panels <strong>with</strong> hidden content <strong>and</strong> images</span><br>
         </div>
     </header>
 
     <main>
-        <div id="zero" class="container container3" data-gsap="sticky-scroll">
+        <div id="zero" class="container container3" data-gsap="sticky-scroll" data-gsap-sticky-scroll-options='{ "keepActive": 2, "scrollMultiplier": 2 }'>
             <div class="wrapper">
                 <div class="panelsWrapper">
                     <div class="panels" data-gsap-sticky-scroll="content">
