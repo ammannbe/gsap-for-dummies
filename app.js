@@ -4,7 +4,7 @@ import { gsap } from "https://cdn.jsdelivr.net/npm/gsap@3.14.2/index.js";
 
 import { initCanvas3d } from './canvas3d/canvas3d.js';
 import { initHorizontalScrolling } from './horizontal-scrolling/horizontal-scrolling.js';
-import { initStickyScroll } from './sticky-scroll/sticky-scroll.js';
+import { resetStickyScroll, initStickyScroll } from './sticky-scroll/sticky-scroll.js';
 import { initSlideinStagger } from './slidein-stagger/slidein-stagger.js';
 
 
@@ -42,6 +42,8 @@ import { initSlideinStagger } from './slidein-stagger/slidein-stagger.js';
             // Only enable on screens larger than 1000px
             mm.add('(min-width: 1001px)', () => {
                 initStickyScroll(container, content, items, images, hiddenItemSelector, options);
+
+                return () => resetStickyScroll(container, content, items, images, hiddenItemSelector);
             });
         } else if (container.dataset.gsap === 'canvas3d') {
             const container = document.querySelector('[data-gsap="canvas3d"]');

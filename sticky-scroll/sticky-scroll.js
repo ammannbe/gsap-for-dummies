@@ -8,6 +8,34 @@ gsap.registerPlugin(ScrollTrigger);
 
 
 /**
+ * Resets all inline styles applied by the sticky scroll animation.
+ *
+ * Clears the GSAP-controlled properties from the sticky content, items,
+ * images, and hidden sub-elements so the section can return to its
+ * default CSS-driven layout, for example when leaving the desktop
+ * breakpoint.
+ *
+ * @param {HTMLElement} container - The outer sticky scroll container.
+ * @param {HTMLElement} content - The sticky scroll content element that may have transform styles.
+ * @param {HTMLElement[]} items - List of sticky scroll content items.
+ * @param {HTMLElement[]} images - List of sticky scroll image elements.
+ * @param {string} hiddenItemSelector - Selector for hidden sub-elements inside the sticky scroll items.
+ *
+ * @returns {void}
+ */
+export function resetStickyScroll(container, content, items, images, hiddenItemSelector) {
+    gsap.set([
+        content,
+        ...items,
+        ...images,
+        ...Array.from(container.querySelectorAll(hiddenItemSelector))
+    ], {
+        clearProps: 'transform,opacity,height,color'
+    });
+}
+
+
+/**
  * Initializes a scroll-driven sticky animation using GSAP ScrollTrigger.
  *
  * Pins a container during scroll and progressively reveals items, images,
