@@ -94,13 +94,13 @@ export function initStickyScroll(container, content, items, images, hiddenItemSe
             y: () => getMoveY(index),
             duration: 0,
             ease: 'none',
-        }, index);
+        }, position);
 
         tl.to(item, {
             opacity: item.dataset.opacity ?? 1,
             color: item.dataset.color ?? '',
             duration: 0,
-        }, index);
+        }, position);
 
         if (images[index]) {
             tl.to(images[index], {
@@ -113,16 +113,15 @@ export function initStickyScroll(container, content, items, images, hiddenItemSe
         }
 
         const hiddenItem = item.querySelector(hiddenItemSelector);
-        const hiddenItemHeight = hiddenItem?.scrollHeight || 0;
 
         if (hiddenItem) {
             gsap.set(hiddenItem, { height: 0 });
 
             tl.to(hiddenItem, {
                 opacity: 1,
-                height: hiddenItemHeight,
+                height: () => (hiddenItem?.scrollHeight || 0),
                 duration: 0,
-            }, index);
+            }, position);
         }
 
         const prevItem = items[index - 1] || null;
@@ -132,7 +131,7 @@ export function initStickyScroll(container, content, items, images, hiddenItemSe
                 opacity: '',
                 color: '',
                 duration: 0,
-            }, index);
+            }, position);
         }
 
         const hiddenPrevItem = prevItem?.querySelector(hiddenItemSelector);
@@ -141,7 +140,13 @@ export function initStickyScroll(container, content, items, images, hiddenItemSe
                 opacity: 0,
                 height: 0,
                 duration: 0,
-            }, index);
+            }, position);
         }
+    });
+
+    // Add empty timeline space after the final item.
+    // This makes the last item stay active for longer.
+    tl.to({}, {
+        duration: 1,
     });
 }
