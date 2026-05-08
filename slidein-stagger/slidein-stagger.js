@@ -33,13 +33,17 @@ export function initSlideinStagger(container, items, { reverse = false } = {}) {
         x: (i) => from(i),
         opacity: 0,
         filter: 'blur(15px)',
-        stagger: 0.15,
-        ease: "power4.out",
-        duration: 2,
     }, {
         x: 0,
         opacity: 1,
         filter: 'blur(0px)',
-        scrollTrigger: container,
+        stagger: 0.15,
+        ease: "power4.out",
+        duration: 2,
+        scrollTrigger: {
+            trigger: container,
+            start: '33% center',
+            markers: true,
+        },
     });
 }
