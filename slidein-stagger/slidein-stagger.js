@@ -31,7 +31,7 @@ export function initSlideinStagger(container, items, { reverse = false } = {}) {
 
     gsap.fromTo(items, {
         x: (i) => from(i),
-        opacity: 0,
+        opacity: -0.5,
         filter: 'blur(15px)',
     }, {
         x: 0,
@@ -39,11 +39,11 @@ export function initSlideinStagger(container, items, { reverse = false } = {}) {
         filter: 'blur(0px)',
         stagger: 0.15,
         ease: "power4.out",
-        duration: 2,
+        duration: 3,
         scrollTrigger: {
             trigger: container,
-            start: '33% center',
-            markers: true,
+            start: 'top 80%',
+            markers: false,
         },
     });
 }

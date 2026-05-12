@@ -26,13 +26,13 @@ gsap.registerPlugin(ScrollTrigger);
  * @param {string} options.url - Image URL pattern containing a `{frame}` placeholder.
  * @param {number} options.framecount - Total number of frames/images in the sequence.
  * @param {number} options.framelength - Number of digits used to pad the frame number.
- * @param {number} [options.animationLength=1] - Multiplier applied to the content height to define the scroll distance.
+ * @param {number} [options.scrollMultiplier=2] - Multiplier applied to the content height to define the scroll distance.
+ * @param {number} [options.repeat=1] - Number of times to repeat the animation.
  *
  * @returns {void}
  */
-export function initCanvas3d(container, content, canvas, { url, framecount = 100, framelength = 4, animationLength = 1 }) {
+export function initCanvas3d(container, content, canvas, { url, framecount = 100, framelength = 4, scrollMultiplier = 2, repeat = 1 }) {
     const context = canvas.getContext('2d');
-    const contentOffsetHeight = content.offsetHeight * animationLength;
 
     function render(context, canvas, image) {
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -45,12 +45,12 @@ export function initCanvas3d(container, content, canvas, { url, framecount = 100
         canvas.height = img.height;
 
         gsap.to(frames, {
-            frame: framecount - 1,
+            frame: framecount * repeat - 1,
             snap: 'frame',
             scrollTrigger: {
                 trigger: container,
                 start: 'top top',
-                end: '+=' + contentOffsetHeight,
+                end: () => '+=' + Math.max(content.offsetHeight * scrollMultiplier, (window.innerHeight * 2)),
                 scrub: 1,
                 invalidateOnRefresh: true,
                 markers: true,
@@ -63,14 +63,16 @@ export function initCanvas3d(container, content, canvas, { url, framecount = 100
     const images = []
     const frames = { frame: 0 };
 
-    for (let i = 0; i < framecount; i++) {
-        const img = new Image();
+    for (let j = 0; j < repeat; j++) {
+        for (let i = 0; i < framecount; i++) {
+            const img = new Image();
 
-        if (i === (framecount - 1)) {
-            img.onload = () => initload(img);
+            if (i === (framecount - 1)) {
+                img.onload = () => initload(img);
+            }
+
+            img.src = url.replace('{frame}', (i + 1).toString().padStart(framelength, '0'));
+            images.push(img);
         }
-
-        img.src = url.replace('{frame}', (i + 1).toString().padStart(framelength, '0'));
-        images.push(img);
     }
 }

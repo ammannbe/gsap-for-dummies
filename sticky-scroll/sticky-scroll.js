@@ -52,12 +52,12 @@ export function resetStickyScroll(container, content, items, images, hiddenItemS
  *
  * @returns {void}
  */
-export function initStickyScroll(container, content, items, images, hiddenItemSelector, { scrollMultiplier = 2, keepActive = 1 }) {
+export function initStickyScroll(container, content, items, images, hiddenItemSelector, { scrollMultiplier = 2, keepActive = 1, moveY = true }) {
     const tl = gsap.timeline({
         scrollTrigger: {
             trigger: container,
             start: 'top top',
-            end: () => '+=' + Math.max(content.offsetHeight * scrollMultiplier, (window.innerHeight * 0.8)),
+            end: () => '+=' + Math.max(content.offsetHeight * scrollMultiplier, (window.innerHeight * 2)),
             scrub: 1,
             pin: true,
             invalidateOnRefresh: true,
@@ -90,15 +90,18 @@ export function initStickyScroll(container, content, items, images, hiddenItemSe
         const position = index;
         const gap = parseFloat(getComputedStyle(content).gap) || 0;
 
-        tl.to(content, {
-            y: () => getMoveY(index),
-            duration: 0,
-            ease: 'none',
-        }, position);
+        if (moveY) {
+            tl.to(content, {
+                y: () => getMoveY(index),
+                duration: 0,
+                ease: 'none',
+            }, position);
+        }
 
         tl.to(item, {
             opacity: item.dataset.opacity ?? 1,
             color: item.dataset.color ?? '',
+            marginLeft: item.dataset.marginLeft ?? '',
             duration: 0,
         }, position);
 
@@ -130,6 +133,7 @@ export function initStickyScroll(container, content, items, images, hiddenItemSe
             tl.to(prevItem ?? {}, {
                 opacity: '',
                 color: '',
+                marginLeft: '',
                 duration: 0,
             }, position);
         }
